@@ -1,0 +1,106 @@
+﻿@model TestApp.ViewModels.UserViewModel
+@ViewBag.Message
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Добавление пользователя</title>    
+    <meta charset="utf-8" />    
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+</head>
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">TestApp</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">        
+        <section class="panel panel-default">
+            <div class="panel-heading">
+                <h1>Добавление пользователя</h1>
+            </div>
+            @using (@Html.BeginForm(null, null, FormMethod.Post, new { id = "add-form"}))
+            {
+                <div class="form-group">
+                    @Html.LabelFor(m => m.User.Name)
+                    @Html.TextBoxFor(m => m.User.Name, new { @class="form-control" })
+                    @Html.ValidationMessageFor(m => m.User.Name, "", new { @class="label label-warning" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.User.Phone)
+                    @Html.TextBoxFor(m => m.User.Phone, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.User.Phone, "", new { @class = "label label-warning" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.User.Email)
+                    @Html.TextBoxFor(m => m.User.Email, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.User.Email, "", new { @class = "label label-warning" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.User.City)
+                    @Html.DropDownListFor(m => m.User.City, Model.CityList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.User.City, "", new { @class = "label label-warning" })
+                </div>
+
+            }
+
+            <div class="panel-footer">
+                <button class="btn btn-default" id="ajax-btn">Добавить через ajax</button>
+            </div>
+
+        </section>
+
+    </div>
+
+    <script type="text/javascript" src="~/lib/jQuery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/lib/inputmask/dist/min/jquery.inputmask.bundle.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#User_Phone").inputmask("+7(999)999 99 99");
+
+            $("#ajax-btn").on("click", function () {
+
+                if (!($("#add-form").valid())) {
+                    //alert("Form not valid");
+                    return;
+                }
+
+                var uName = $("#User_Name").val();
+                var uPhone = $("#User_Phone").val();
+                var uEmail = $("#User_Email").val();
+                var uCity = $("#User_City").val();
+
+                var userViewModel = {
+                    User: {
+                        Name: uName,
+                        Phone: uPhone,
+                        Email: uEmail,
+                        City: uCity
+                    }
+                }
+
+                //alert("ajax");
+
+                $.ajax({
+                    type: "POST",
+                    url: "/User/Add",
+                    data: userViewModel,
+                    success: function () {
+                        alert("Пользователь добавлен")
+                    },
+                    error: function () {
+                        alert("Не удалось добавить пользователя")
+                    }
+                })
+            })
+        })
+    </script>
+</body>
+</html>
